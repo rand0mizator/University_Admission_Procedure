@@ -15,6 +15,11 @@ for department in departments:
         if dep1 == department and len(admissions[department]) < maximum_students:
             admissions[department].append(applicant)
             applicants.remove(applicant)
+    for applicant in applicants:
+        name, surname, gpa, dep1, dep2, dep3 = applicant
+        if dep2 == department and len(admissions[department]) < maximum_students:
+            admissions[department].append(applicant)
+            applicants.remove(applicant)
 # print(admissions)
 for department, students in admissions.items():
     print()
