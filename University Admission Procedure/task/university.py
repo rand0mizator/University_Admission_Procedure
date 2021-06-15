@@ -1,58 +1,60 @@
-maximum_students= int(input())
+file_name = "applicants.txt"
 applicants = []
-departments = ["Biotech", "Chemistry", "Engineering", "Mathematics", "Physics"]
-admissions = {department: [] for department in departments}
-# print(admissions)
-with open("applicant_list.txt", 'r') as file:
+
+maximum_students = int(input())
+
+with open(file_name, 'r') as file:
     for line in file:
         applicants.append(line.split())
 
+# sorting applicants list by gpa and then alphabeticaly
 applicants = sorted(applicants, key=lambda x: (-float(x[2]), x[0], x[1]))
 
-for department in departments:
-    for applicant in applicants:
-        name, surname, gpa, dep1, dep2, dep3 = applicant
-        if dep1 == department and len(admissions[department]) < maximum_students:
-            admissions[department].append(applicant)
-            applicants.remove(applicant)
-    for applicant in applicants:
-        name, surname, gpa, dep1, dep2, dep3 = applicant
-        if dep2 == department and len(admissions[department]) < maximum_students:
-            admissions[department].append(applicant)
-            applicants.remove(applicant)
-# print(admissions)
-for department, students in admissions.items():
+departments = {"Biotech": [],
+               "Chemistry": [],
+               "Engineering": [],
+               "Mathematics": [],
+               "Physics": []
+               }
+# creating temporary duplicate of applicants list to track admitted applicants
+temp = applicants[:]
+# FIRST ROUND of admission, trying to admit student to its FIRST priority department
+for applicant in applicants:
+    name, surname, gpa, dep1, dep2, dep3 = applicant
+    for department in [dep1]:
+        if len(departments[department]) < maximum_students:
+            departments[department].append(applicant)
+            temp.remove(applicant)
+            break
+# coping temp list with removed admitted in FIRST ROUND applicants to initial list of applicants
+applicants = temp[:]
+# sorting new applicants list by gpa and alphabeticaly
+applicants = sorted(applicants, key=lambda x: (-float(x[2]), x[0], x[1]))
+# SECOND ROUND of admission, trying to admit student to its SECOND priority department
+for applicant in applicants:
+    name, surname, gpa, dep1, dep2, dep3 = applicant
+    for department in [dep2]:
+        if len(departments[department]) < maximum_students:
+            departments[department].append(applicant)
+            temp.remove(applicant)
+            break
+# coping temp list with removed admitted in SECOND ROUND applicants to initial list of applicants
+applicants = temp[:]
+# sorting new applicants list by gpa and alphabeticaly
+applicants = sorted(applicants, key=lambda x: (-float(x[2]), x[0], x[1]))
+# SECOND ROUND of admission, trying to admit student to its THIRD priority department
+for applicant in applicants:
+    name, surname, gpa, dep1, dep2, dep3 = applicant
+    for department in [dep3]:
+        if len(departments[department]) < maximum_students:
+            departments[department].append(applicant)
+            temp.remove(applicant)
+            break
+# iterating through departments and printing students
+for department, students in departments.items():
     print()
     print(department)
+    students = sorted(students, key=lambda x: (-float(x[2]), x[0], x[1]))
     for student in students:
-        print(f"{student[0]} {student[1]} {student[2]}")
-
-
-
-
-# print(applicants)
-# applicants = sorted(applicants, key=lambda x: (-float(x[2]), x[0], x[1]))
-# print(applicants)
-
-# for applicant in applicants:
-#     applicants.remove(applicant)
-#     for department in departments:
-#         total_admissions = 0
-#         print("")
-#         print(department)
-#         if total_admissions < maximum_students:
-#             name, surname, gpa, dep1, dep2, dep3 = applicant
-#             if dep1 == department:
-#                 total_admissions += 1
-#                 print(f"{name} {surname} {gpa}")
-#                 continue
-#             elif dep2 == department:
-#                 total_admissions += 1
-#                 print(f"{name} {surname} {gpa}")
-#                 continue
-#             elif dep3 == department:
-#                 total_admissions += 1
-#                 print(f"{name} {surname} {gpa}")
-#                 continue
-#         else:
-#             continue
+        name, surname, gpa, dep1, dep2, dep3 = student
+        print(name, surname, gpa)
