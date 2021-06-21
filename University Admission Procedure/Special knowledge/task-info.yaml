@@ -235,38 +235,9 @@ files:
     Loura Macansh 71 81 81 93 Engineering Physics Mathematics
     Nastassja Trustram 60 49 82 68 Mathematics Engineering Physics"""
   learner_created: false
-- name: applicants.txt
-  visible: true
-  learner_created: true
 feedback_link: https://hyperskill.org/projects/163/stages/848/implement#comment
-status: Failed
+status: Solved
 feedback:
-  message: |-
-    Wrong answer in test #1
-
-    Line 1 for the Biotech department does not seem to contain three elements: first name, last name and score.
-    Make sure you separate them with one whitespace character.
-
-    Please find below the output of your program during this failed test.
-    Note that the '>' character indicates the beginning of the input line.
-
-    ---
-
-    > 1
-
-    Biotech
-    Genee Mccrae
-
-    Chemistry
-    Brittania Denny
-
-    Engineering
-    Jamarl Delap
-
-    Mathematics
-    Mehul Bull
-
-    Physics
-    Blia Sagar
-  time: Wed, 16 Jun 2021 03:37:31 UTC
-record: -1
+  message: Congratulations!
+  time: Mon, 21 Jun 2021 06:57:38 UTC
+record: 5

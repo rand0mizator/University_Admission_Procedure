@@ -1,99 +1,72 @@
-# class University:
-#     def __init__(self, applicants_from_file, departments_names, max_students=int(input())):
-#         self.applicants = [self.Applicant(applicant) for applicant in applicants_from_file]
-#         self.departments_names = ["Biotech", "Chemistry", "Engineering", "Mathematics", "Physics"]
-#
-#     class Applicant:
-#         def __init__(self, applicant):
-#             name, surname, phys, chem, math, compsc, dep1, dep2, dep3 = applicant
-#             self.name = name
-#             self.surname = surname
-#             self.phys = phys
-#             self.chem = chem
-#             self.math = math
-#             self.compsc = compsc
-#             self.dep1 = dep1
-#             self.dep2 = dep2
-#             self.dep3 = dep3
-#             self.department = None
-#
-#     class Department:
-#         def __init__(self, departments_names):
+from statistics import mean
+
 
 class Department:
-    def __init__(self, department_name, department_exam):
+    """represents department, need string with name as input for __init__"""
+    def __init__(self, department_name):
         self.department_name = department_name
-        self.department_exam = department_exam
-        self.is_full = False
         self.applicants = []
         self.students = []
 
     def __str__(self):
-        return f"{self.department_name} {self.department_exam} {self.is_full} {self.students} {self.applicants}"
+        return f"\n{self.department_name}"
+
+    def fill_students(self, n):  # n - number of department priority: 0 for first priority department, 1 for second etc.
+        self.applicants = persons[:]   # copy base list of persons who want to admit
+        self.applicants = self.sorter(self.applicants)  # sorting applicants by their score for this department
+        for applicant in self.applicants:
+            if len(self.students) < maximum_students and applicant.department_priority[n] == self.department_name:
+                applicant.student_of_department = self.department_name
+                self.students.append(applicant)
+                persons.remove(applicant)  # most important thing - remove admitted applicant from initial list
+        self.students = self.sorter(self.students)  # sort students of department by their score
+
+    def sorter(self, sequence):
+        return sorted(sequence, key=lambda x: (-x.scores[self.department_name],
+                                               x.name, x.surname))
 
 
-class Applicant:
-    def __init__(self, applicant):
-        name, surname, phys, chem, math, compsc, dep1, dep2, dep3 = applicant
+class Person:
+    """represents applicants and students, takes list with elements
+    [name, surname, phys, chem, math, compsc, dep1, dep2, dep3] as input for __init__"""
+    def __init__(self, person):
+        name, surname, phys, chem, math, compsc, dep1, dep2, dep3 = person
         self.name = name
         self.surname = surname
-        self.physics_score = phys
-        self.chemistry_score = chem
-        self.math_score = math
-        self.computer_science_score = compsc
-        self.biotech = 0
-        self.chemistry = 0
-        self.engineering = 0
-        self.mathematics = 0
-        self.physics = 0
-        self.dep1 = dep1
-        self.dep2 = dep2
-        self.dep3 = dep3
-        for dep in [self.dep1, self.dep2, self.dep3]:
-            if dep == 'Biotech':
-                self.biotech = 1
-            elif dep == 'Chemistry':
-                self.chemistry = 1
-            elif dep == 'Engineering':
-                self.engineering = 1
-            elif dep == 'Mathematics':
-                self.mathematics = 1
-            elif dep == 'Physics':
-                self.physics = 1
-        self.department = None
+        self.scores = {'Biotech': round(mean([float(phys), float(chem)]), 1),
+                       'Chemistry': float(chem),
+                       'Engineering': round(mean([float(compsc), float(math)]), 1),
+                       'Mathematics': float(math),
+                       'Physics': round(mean([float(phys), float(math)]), 1)
+                       }
+        self.department_priority = [dep1, dep2, dep3]
+        self.student_of_department = None
 
     def __str__(self):
-        return f"{self.name} {self.surname}, physics: {self.physics_score}, chemistry: {self.chemistry_score}, " \
-               f"math: {self.math_score}, compsc: {self.computer_science_score}, {self.dep1} {self.dep2} {self.dep3}"
+        return f"{self.name} {self.surname} {self.scores[self.student_of_department]}"
 
 
-departments_info = {"Biotech": "chemistry",
-                    "Chemistry": "chemistry",
-                    "Engineering": "computer science",
-                    "Mathematics": "math",
-                    "Physics": "physics"
-                    }
+departments_names = ['Biotech', 'Chemistry', 'Engineering', 'Mathematics', 'Physics']
 
 file_name = "applicants.txt"
-applicants_from_file = []
-applicants = []
+persons_from_file = []
 
 with open(file_name, 'r') as file:
     for line in file:
-        applicants_from_file.append(line.split())
+        persons_from_file.append(line.split())
 
 maximum_students = int(input())
 
-applicants = [Applicant(applicant) for applicant in applicants_from_file]
-departments = [Department(name, exam) for name, exam in departments_info.items()]
+persons = [Person(person) for person in persons_from_file]  # creating list of objects of class Person
+departments = [Department(name) for name in departments_names]  # creating list of objects of class Department
 
-for applicant in applicants:
-    for dep in [applicant.dep1, applicant.dep2, applicant.dep3]:
-        for department in departments:
-            if dep == department.department_name:
-                department.applicants.append(applicant)
+for n in range(3):  # n - number of priority
+    for department in departments:  # for each priority for each department take students with highest grade
+        department.fill_students(n)
 
-for department in departments:
-    print(department)
-    for applicant in department.applicants:
-        print(applicant)
+for department in departments:  # print out structure defined in __str__ methods
+    with open(department.department_name.lower() + '.txt', 'w') as file:
+        print(department)
+        for student in department.students:
+            file.write(str(student) + '\n')
+            print(student)
