@@ -30,14 +30,24 @@ class Person:
     """represents applicants and students, takes list with elements
     [name, surname, phys, chem, math, compsc, dep1, dep2, dep3] as input for __init__"""
     def __init__(self, person):
-        name, surname, phys, chem, math, compsc, dep1, dep2, dep3 = person
+        name, surname, phys, chem, math, compsc, exam, dep1, dep2, dep3 = person
         self.name = name
         self.surname = surname
-        self.scores = {'Biotech': round(mean([float(phys), float(chem)]), 1),
-                       'Chemistry': float(chem),
-                       'Engineering': round(mean([float(compsc), float(math)]), 1),
-                       'Mathematics': float(math),
-                       'Physics': round(mean([float(phys), float(math)]), 1)
+        self.scores = {'Biotech': (round(mean([float(phys), float(chem)]), 1)
+                                   if round(mean([float(phys), float(chem)])) > float(exam)
+                                   else float(exam)),
+                       'Chemistry': (float(chem)
+                                     if float(chem) > float(exam)
+                                     else float(exam)),
+                       'Engineering': (round(mean([float(compsc), float(math)]), 1)
+                                       if round(mean([float(compsc), float(math)]), 1) > float(exam)
+                                       else float(exam)),
+                       'Mathematics': (float(math)
+                                       if float(math) > float(exam)
+                                       else float(exam)),
+                       'Physics': (round(mean([float(phys), float(math)]), 1)
+                                   if round(mean([float(phys), float(math)]), 1) > float(exam)
+                                   else float(exam))
                        }
         self.department_priority = [dep1, dep2, dep3]
         self.student_of_department = None
